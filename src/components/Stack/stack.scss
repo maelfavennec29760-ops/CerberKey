@@ -1,0 +1,182 @@
+
+.techStack {
+    width: 100%;
+    min-height: auto;
+    padding: 70px 6% 90px;
+    background: #000;
+    color: #fff;
+    // =========================
+    // TITRE
+    // =========================
+    .techStackHeader {
+        max-width: 800px;
+        margin: 0 auto 55px;
+        text-align: center;
+        .sectionLabel {
+            display: block;
+            margin-bottom: 14px;
+            color: #ff1738;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+        }
+        h2 {
+            margin: 0;
+            font-family: "Exo 2", sans-serif;
+            font-size: clamp(32px, 4vw, 54px);
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: 2px;
+            color: #fff;
+            span {
+                color: #ff1738;
+            }
+        }
+        p {
+            margin: 18px auto 0;
+            max-width: 550px;
+
+            color: #888;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+    }
+    // =========================
+    // GRILLE
+    // =========================
+    .techStackGrid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 22px;
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+    // =========================
+    // CARTES
+    // =========================
+    .techCard {
+    img[src*="Express"] {
+        filter: brightness(0) invert(1);
+    }
+}
+    .techCard {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 22px;
+        min-height: 220px;
+        padding: 30px 20px;
+        background: #0d0d0d;
+        border: 1px solid rgba(255, 23, 56, 0.3);
+        border-radius: 10px;
+        color: #fff;
+        text-decoration: none;
+        overflow: hidden;
+        transition:
+            transform 0.3s ease,
+            border-color 0.3s ease,
+            box-shadow 0.3s ease;
+        &::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 25%;
+            right: 25%;
+            height: 1px;
+            background: #ff1738;
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
+        }
+        img {
+            width: 105px;
+            height: 105px;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+        h3 {
+            margin: 0;
+            font-family: "Exo 2", sans-serif;
+            font-size: 17px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-align: center;
+        }
+        &:hover {
+            border-color: #ff1738;
+            box-shadow:
+                0 0 22px rgba(255, 23, 56, 0.15);
+                &::before {
+                opacity: 1;
+            }
+            img {
+                transform: scale(1.08);
+            }
+        }
+        &:focus-visible {
+            outline: 2px solid #ff1738;
+            outline-offset: 4px;
+        }
+    }
+}
+// =========================
+// TABLETTE
+// =========================
+@media (max-width: 900px) {
+    .techStack {
+        padding: 75px 5% 90px;
+        .techStackGrid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+        .techCard {
+            min-height: 195px;
+            img {
+                width: 90px;
+                height: 90px;
+            }
+        }
+    }
+}
+// =========================
+// MOBILE
+// =========================
+@media (max-width: 600px) {
+    .techStack {
+        min-height: auto;
+        padding: 65px 5% 80px;
+        .techStackHeader {
+            margin-bottom: 35px;
+            .sectionLabel {
+                font-size: 11px;
+                letter-spacing: 3px;
+            }
+            h2 {
+                font-size: clamp(28px, 7vw, 38px);
+                letter-spacing: 1px;
+            }
+            p {
+                font-size: 13px;
+            }
+        }
+        .techStackGrid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+        .techCard {
+            min-height: 160px;
+            padding: 20px 10px;
+            gap: 15px;
+            img {
+                width: 75px;
+                height: 75px;
+            }
+            h3 {
+                font-size: 13px;
+            }
+        }
+    }
+}
+

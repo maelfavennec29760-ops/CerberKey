@@ -1,0 +1,252 @@
+
+.hero {
+    position: relative;
+    top: -55px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: calc(100vh - 110px);
+    padding: 0 6%;
+    // =============================
+    // CONTENU
+    // =============================
+    .heroContent {
+        position: relative;
+        z-index: 2;
+        width: 50%;
+        max-width: 720px;
+        transform: translateY(-115px);
+        // =============================
+        // TEXTE
+        // =============================
+        .upText {
+            margin-bottom: 14px;
+            color: #ff1738;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 4px;
+        }
+        h1 {
+            margin: 0;
+            color: #f5f5f5;
+            font-family: "Exo 2", sans-serif;
+            font-size: clamp(45px, 4vw, 72px);
+            font-weight: 800;
+            line-height: 0.95;
+            letter-spacing: 1px;
+            span {
+                display: block;
+                margin-top: 8px;
+                color: #ff1738;
+            }
+        }
+        > p:not(.upText) {
+            max-width: 650px;
+            margin-top: 20px;
+            color: #b5b5b5;
+            font-size: 18px;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+        // =============================
+        // BOUTONS
+        // =============================
+        .heroActions {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 28px;
+            .testCerberKey,
+            .heroDocumentation {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 52px;
+                padding: 14px 28px;
+                border: 1px solid #ff1738;
+                border-radius: 6px;
+                font-family: "Exo 2", sans-serif;
+                font-size: 16px;
+                font-weight: 600;
+                text-decoration: none;
+                cursor: pointer;
+                transition:
+                    background 0.25s ease,
+                    box-shadow 0.25s ease;
+            }
+            // BOUTON PRINCIPAL
+            .testCerberKey {
+                background: #ff1738;
+                color: #fff;
+                &:hover {
+                    background: transparent;
+                    box-shadow:
+                        0 0 20px rgba(255, 23, 56, 0.35);
+                }
+            }
+            // BOUTON DOCUMENTATION
+            .heroDocumentation {
+                gap: 12px;
+                background: transparent;
+                color: #fff;
+                &:hover {
+                    background: #ff1738;
+                    box-shadow:
+                        0 0 20px rgba(255, 23, 56, 0.2);
+                }
+            }
+            .testCerberKey,
+            .heroDocumentation {
+                &:focus-visible {
+                    outline: 2px solid #fff;
+                    outline-offset: 4px;
+                }
+            }
+        }
+    }
+    // =============================
+    // IMAGE DU CERBÈRE
+    // =============================
+    .heroImg {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 45%;
+        transform: translateY(-110px);
+        img {
+            display: block;
+            width: 100%;
+            max-width: 680px;
+            height: auto;
+            object-fit: contain;
+        }
+    }
+}
+
+// =============================
+// TABLETTE
+// =============================
+
+@media (max-width: 1100px) {
+    .hero {
+        padding: 0 5%;
+        .heroContent {
+            width: 55%;
+            transform: translateY(-75px);
+            .upText {
+                font-size: 13px;
+                letter-spacing: 3px;
+            }
+            h1 {
+                font-size: clamp(36px, 4.5vw, 54px);
+            }
+            > p:not(.upText) {
+                font-size: 15px;
+            }
+            .heroActions {
+                gap: 12px;
+                .testCerberKey,
+                .heroDocumentation {
+                    min-height: 48px;
+                    padding: 12px 20px;
+                    font-size: 14px;
+                }
+            }
+        }
+        .heroImg {
+            width: 42%;
+            transform: translateY(-70px);
+        }
+    }
+}
+
+// =============================
+// MOBILE
+// =============================
+
+@media (max-width: 700px) {
+    .hero {
+        top: 0;
+        flex-direction: column;
+        justify-content: flex-start;
+        gap: 35px;
+        height: auto;
+        min-height: 100vh;
+        padding: 60px 5% 100px;
+        .heroContent {
+            width: 100%;
+            max-width: 550px;
+            text-align: center;
+            transform: none;
+            .upText {
+                font-size: 11px;
+                letter-spacing: 3px;
+            }
+            h1 {
+                font-size: clamp(32px, 8vw, 48px);
+                line-height: 1.05;
+            }
+            > p:not(.upText) {
+                margin: 20px auto 0;
+                font-size: 14px;
+            }
+            .heroActions {
+                justify-content: center;
+                gap: 12px;
+                margin-top: 25px;
+                .testCerberKey,
+                .heroDocumentation {
+                    min-height: 46px;
+                    padding: 12px 18px;
+                    font-size: 13px;
+                }
+            }
+        }
+        .heroImg {
+            width: 100%;
+            max-width: 450px;
+            transform: none;
+            img {
+                max-width: 100%;
+            }
+        }
+    }
+}
+
+// =============================
+// PETITS MOBILES
+// =============================
+
+@media (max-width: 400px) {
+    .hero {
+        .heroContent {
+            .heroActions {
+                flex-direction: column;
+                align-items: stretch;
+
+                .testCerberKey,
+                .heroDocumentation {
+                    width: 100%;
+                }
+            }
+        }
+    }
+}
+
+// =============================
+// ACCESSIBILITÉ
+// =============================
+
+@media (prefers-reduced-motion: reduce) {
+    .hero {
+        .heroActions {
+            .testCerberKey,
+            .heroDocumentation {
+                transition: none;
+            }
+        }
+    }
+}

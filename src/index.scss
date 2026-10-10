@@ -1,0 +1,68 @@
+@font-face {
+    font-family: "Exo 2";
+    src: url("../src/assets/font/Exo2.ttf") format("truetype");
+    font-weight: 100 900;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Orbitron";
+    src: url("../src/assets/font/Orbitron.ttf") format("truetype");
+    font-weight: 100 900;
+    font-style: normal;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    color: #fff;
+    font-family: "Orbitron", sans-serif;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.heroBackground {
+    min-height: 100vh;
+    background-image: url("./assets/images/background.webp");
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    position: relative;
+    overflow: hidden;
+}
+// =============================
+// ESPACEMENT GLOBAL DES SECTIONS
+// =============================
+
+.howItWorks,
+.demo,
+.techStack {
+    min-height: auto;
+    background: #000;
+    padding: 80px 6%;
+}
+
+// =============================
+// SÉPARATION ENTRE LES SECTIONS
+// =============================
+
+.demo,
+.techStack {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}

@@ -1,0 +1,298 @@
+
+.demo {
+    width: 100%;
+    min-height: auto;
+    padding: 65px 6% 70px;
+    background: #000;
+    color: #fff;
+    // =============================
+    // HEADER
+    // =============================
+    .demoHeader {
+        max-width: 750px;
+        margin: 0 auto;
+        text-align: center;
+        .sectionLabel {
+            display: block;
+            margin-bottom: 12px;
+            color: #ff1738;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 4px;
+        }
+        h2 {
+            margin: 0;
+            font-family: "Exo 2", sans-serif;
+            font-size: clamp(36px, 3vw, 52px);
+            font-weight: 800;
+            line-height: 1.15;
+            span {
+                color: #ff1738;
+            }
+        }
+        .demoDescription {
+            max-width: 600px;
+            margin: 14px auto 0;
+            color: #888;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+    }
+    // =============================
+    // CONTENU
+    // =============================
+    .demoContent {
+        width: 100%;
+        max-width: 800px;
+        margin: 40px auto 0;
+    }
+    // =============================
+    // FORMULAIRE ET BOUTONS
+    // =============================
+    .demoActions {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 18px;
+        .emailForm {
+            display: flex;
+            height: 50px;
+            border: 1px solid #242424;
+            border-radius: 6px;
+            overflow: hidden;
+            transition: border-color 0.25s ease;
+            &:focus-within {
+                border-color: #ff1738;
+            }
+            input {
+                width: 250px;
+                min-width: 0;
+                padding: 0 16px;
+                border: none;
+                outline: none;
+                background: #050505;
+                color: #fff;
+                font-family: "Exo 2", sans-serif;
+                font-size: 14px;
+                &::placeholder {
+                    color: #666;
+                }
+            }
+            button {
+                flex-shrink: 0;
+                padding: 0 22px;
+                border: none;
+                background: #ff1738;
+                color: #fff;
+                font-family: "Exo 2", sans-serif;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: background 0.25s ease;
+                &:hover {
+                    background: #d91430;
+                }
+                &:focus-visible {
+                    outline: 2px solid #fff;
+                    outline-offset: -3px;
+                }
+            }
+        }
+        .separator {
+            color: #888;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 2px;
+        }
+        .downloadButton {
+            height: 50px;
+            padding: 0 24px;
+            border: 1px solid #242424;
+            border-radius: 6px;
+            background: #050505;
+            color: #bbb;
+            font-family: "Exo 2", sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition:
+                border-color 0.25s ease,
+                color 0.25s ease;
+                &:hover {
+                border-color: #ff1738;
+                color: #fff;
+            }
+            &:focus-visible {
+                outline: 2px solid #ff1738;
+                outline-offset: 3px;
+            }
+        }
+    }
+    // =============================
+    // TEST DE L'IMAGE
+    // =============================
+     .demoTest {
+        max-width: 650px;
+        margin: 65px auto 0;
+        text-align: center;
+        .demoTestHeader {
+            > span {
+                display: block;
+                color: #ff1738;
+                font-size: 11px;
+                font-weight: 600;
+                letter-spacing: 3px;
+            }
+            h3 {
+                margin: 10px 0 0;
+                font-family: "Exo 2", sans-serif;
+                font-size: 26px;
+                font-weight: 700;
+            }
+            p {
+                margin: 8px 0 0;
+                color: #888;
+                font-size: 14px;
+                line-height: 1.5;
+            }
+        }
+        // =============================
+        // ZONE DE DÉPÔT
+        // =============================
+        .uploadZone {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-height: 150px;
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px dashed #333;
+            border-radius: 6px;
+            background: #030303;
+            cursor: pointer;
+            transition:
+                border-color 0.25s ease,
+                background 0.25s ease,
+                box-shadow 0.25s ease;
+            p {
+                margin: 0;
+                color: #ddd;
+                font-size: 14px;
+                font-weight: 600;
+                letter-spacing: 1px;
+            }
+            span {
+                margin-top: 7px;
+
+                color: #777;
+                font-size: 12px;
+            }
+            &:hover,
+            &:focus-within {
+                border-color: #ff1738;
+                background: #070303;
+
+                box-shadow:
+                    0 0 25px rgba(255, 23, 56, 0.08);
+            }
+            &:focus-visible {
+                outline: 2px solid #ff1738;
+                outline-offset: 4px;
+            }
+        }
+    }
+}
+// =============================
+// TABLETTE
+// =============================
+@media (max-width: 900px) {
+    .demo {
+        padding: 60px 5% 65px;
+        .demoContent {
+            margin-top: 35px;
+        }
+        .demoTest {
+            margin-top: 55px;
+        }
+    }
+}
+// =============================
+// MOBILE
+// =============================
+@media (max-width: 600px) {
+    .demo {
+        padding: 55px 5% 60px;
+        .demoHeader {
+            .sectionLabel {
+                font-size: 11px;
+                letter-spacing: 3px;
+            }
+            h2 {
+                font-size: clamp(28px, 7vw, 38px);
+            }
+            .demoDescription {
+                font-size: 13px;
+            }
+        }
+        .demoContent {
+            margin-top: 30px;
+        }
+        .demoActions {
+            flex-direction: column;
+            gap: 15px;
+            .emailForm {
+                width: 100%;
+                max-width: 400px;
+                input {
+                    flex: 1;
+                    width: auto;
+                }
+                button {
+                    padding: 0 16px;
+                }
+            }
+            .downloadButton {
+                width: 100%;
+                max-width: 400px;
+            }
+        }
+        .demoTest {
+            margin-top: 50px;
+            .demoTestHeader {
+                h3 {
+                    font-size: 22px;
+                }
+                p {
+                    font-size: 13px;
+                }
+            }
+            .uploadZone {
+                min-height: 140px;
+                margin-top: 25px;
+                padding: 18px;
+                p {
+                    font-size: 12px;
+                }
+                span {
+                    font-size: 11px;
+                }
+            }
+        }
+    }
+}
+// =============================
+// ACCESSIBILITÉ
+// =============================
+@media (prefers-reduced-motion: reduce) {
+    .demo {
+        .emailForm,
+        .emailForm button,
+        .downloadButton,
+        .uploadZone {
+            transition: none;
+        }
+    }
+}

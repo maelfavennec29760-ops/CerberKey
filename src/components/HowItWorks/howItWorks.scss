@@ -1,0 +1,241 @@
+
+.howItWorks {
+    position: relative;
+    z-index: 20;
+    width: 100%;
+    min-height: auto;
+    margin-top: -180px;
+    padding: 100px 6% 75px;
+    background: #000;
+    color: #fff;
+    // =============================
+    // TRANSITION AVEC LE HERO
+    // =============================
+    &::before {
+        content: "";
+        left: 0;
+        right: 0;
+        top: -250px;
+        height: 250px;
+        background: linear-gradient(
+            to bottom,
+            transparent 0%,
+            rgba(0, 0, 0, 0.08) 15%,
+            rgba(0, 0, 0, 0.25) 30%,
+            rgba(0, 0, 0, 0.5) 50%,
+            rgba(0, 0, 0, 0.75) 68%,
+            rgba(0, 0, 0, 0.92) 85%,
+            #000 100%
+        );
+        pointer-events: none;
+    }
+    // =============================
+    // HEADER
+    // =============================
+    .howItWorksHeader {
+        position: relative;
+        z-index: 2;
+        transform: translateY(-110px);
+        text-align: center;
+        h2 {
+            margin: 0;
+            font-family: "Exo 2", sans-serif;
+            font-size: clamp(36px, 3vw, 52px);
+            font-weight: 800;
+            line-height: 1.15;
+            span {
+                color: #ff1738;
+            }
+        }
+        > p {
+            max-width: 600px;
+            margin: 12px auto 0;
+            color: #888;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        // =============================
+        // FLÈCHE ANIMÉE
+        // =============================
+        .scrollIndicator {
+            display: flex;
+            justify-content: center;
+            margin-top: 25px;
+            span {
+                width: 14px;
+                height: 14px;
+                border-right: 2px solid #ff1738;
+                border-bottom: 2px solid #ff1738;
+                transform: rotate(45deg);
+                animation: arrowDown 1.8s ease-in-out infinite;
+                filter: drop-shadow(
+                    0 0 5px rgba(255, 23, 56, 0.5)
+                );
+            }
+        }
+    }
+    // =============================
+    // ÉTAPES
+    // =============================
+    .howItWorksSteps {
+        position: relative;
+        z-index: 2;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 40px;
+        width: 100%;
+        max-width: 1400px;
+        margin: -45px auto 0;
+        .step {
+            text-align: center;
+            .stepNumber {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                color: #ff1738;
+                font-size: 14px;
+                font-weight: 600;
+                letter-spacing: 2px;
+                &::after {
+                    content: "";
+                    width: 8px;
+                    height: 8px;
+                    margin-top: 14px;
+                    border-radius: 50%;
+                    background: #ff1738;
+                    box-shadow:
+                        0 0 8px rgba(255, 23, 56, 0.9),
+                        0 0 20px rgba(255, 23, 56, 0.4);
+                }
+            }
+            h3 {
+                margin: 20px 0 0;
+                color: #fff;
+                font-family: "Exo 2", sans-serif;
+                font-size: 20px;
+                font-weight: 600;
+            }
+            p {
+                max-width: 260px;
+                margin: 10px auto 0;
+                color: #888;
+                font-size: 15px;
+                line-height: 1.5;
+            }
+        }
+    }
+}
+// =============================
+// TABLETTE
+// =============================
+@media (max-width: 900px) {
+    .howItWorks {
+        margin-top: -120px;
+        padding: 100px 5% 65px;
+        &::before {
+            top: -180px;
+            height: 180px;
+        }
+        .howItWorksHeader {
+            transform: translateY(-75px);
+            h2 {
+                font-size: clamp(30px, 4vw, 42px);
+            }
+            > p {
+                font-size: 14px;
+            }
+        }
+        .howItWorksSteps {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 45px 25px;
+            margin-top: -20px;
+            .step {
+                h3 {
+                    font-size: 18px;
+                }
+                p {
+                    font-size: 14px;
+                }
+            }
+        }
+    }
+}
+// =============================
+// MOBILE
+// =============================
+@media (max-width: 600px) {
+    .howItWorks {
+        margin-top: -80px;
+        padding: 90px 5% 60px;
+        &::before {
+            top: -120px;
+            height: 120px;
+        }
+        .howItWorksHeader {
+            transform: translateY(-55px);
+            h2 {
+                font-size: clamp(28px, 7vw, 38px);
+            }
+            > p {
+                font-size: 13px;
+            }
+            .scrollIndicator {
+                margin-top: 20px;
+                span {
+                    width: 11px;
+                    height: 11px;
+                }
+            }
+        }
+        .howItWorksSteps {
+            grid-template-columns: 1fr;
+            gap: 35px;
+            margin-top: -15px;
+            .step {
+                .stepNumber {
+                    font-size: 12px;
+                    &::after {
+                        width: 7px;
+                        height: 7px;
+                        margin-top: 10px;
+                    }
+                }
+                h3 {
+                    margin-top: 15px;
+                    font-size: 18px;
+                }
+                p {
+                    max-width: 300px;
+                    margin-top: 8px;
+                    font-size: 13px;
+                }
+            }
+        }
+    }
+}
+// =============================
+// ANIMATION
+// =============================
+@keyframes arrowDown {
+    0% {
+        transform: translateY(0) rotate(45deg);
+        opacity: 0.35;
+    }
+    50% {
+        transform: translateY(8px) rotate(45deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(0) rotate(45deg);
+        opacity: 0.35;
+    }
+}
+// =============================
+// ACCESSIBILITÉ
+// =============================
+@media (prefers-reduced-motion: reduce) {
+    .howItWorks .scrollIndicator span {
+        animation: none;
+        opacity: 1;
+    }
+}
