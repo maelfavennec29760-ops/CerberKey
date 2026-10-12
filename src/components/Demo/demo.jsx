@@ -1,6 +1,26 @@
+import { useState } from 'react'
+import { startDemo } from '../../services/demoService.js'
+import { downloadImages } from '../../utils/downloadImage.js'
 import './demo.scss'
 
 function Demo() {
+    const [isLoading, setIsLoading] = useState(false)
+    const [sessionId, setSessionId] = useState(null)
+    const [error, setError] = useState('')
+    const handleDownload = async () => {
+        setIsLoading(true)
+        setError('')
+        try {
+            const data = await startDemo()
+            await downloadImages(data.images)
+            setSessionId(data.sessionId)
+        } catch (error) {
+            console.error(error);
+            setError("Unable to generate images. Please try again.");
+        } finally {
+            setIsLoading(false)
+        }
+    }
     return (
         <section className="demo" id="demo">
             <div className="demoHeader">
@@ -20,8 +40,8 @@ function Demo() {
                         </button>
                     </div>
                     <span className="sperator">OU</span>
-                    <button className="downloadButton" type="button">
-                        Télécharger les images
+                    <button className="downloadButton" type="button" onClick={handleDownload} disabled={isLoading}>
+                        {isLoading ? 'Génération...' : 'Télécharger les images'}
                     </button>
                 </div>
                 <div className="demoTest">
