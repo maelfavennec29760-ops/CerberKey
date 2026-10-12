@@ -1,0 +1,33 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model DemoSession {
+  // Identifiant unique de la session
+  id        String   @id @default(uuid())
+
+  // Adresse e-mail facultative
+  email     String?
+
+  // Empreinte SHA-256 du token
+  tokenHash String?   @unique
+
+  // Nonce utilisé pour retrouver les bits dans l'image
+  nonce     String?
+
+  // Date de création
+  createdAt DateTime @default(now())
+
+  // Date d'expiration de la session
+  expiresAt DateTime
+
+  // Date d'utilisation du token (null = non utilisé)
+  usedAt    DateTime?
+
+  @@map("demo_sessions")
+}
