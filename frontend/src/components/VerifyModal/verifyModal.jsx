@@ -2,7 +2,7 @@ import { verificationSteps } from '../../data/steps.js'
 import { useEffect, useState } from 'react'
 import './verifyModal.scss'
 
-function VerifyModal({ image, onClose, isVerifying, verificationResult, error }) {
+function VerifyModal({ image, onClose, isVerifying, verificationResult, error, onFeedback }) {
     const [preview, setPreview] = useState(null)
     const [visibleStep, setVisibleStep] = useState(0)
     useEffect(() => {
@@ -100,7 +100,7 @@ function VerifyModal({ image, onClose, isVerifying, verificationResult, error })
                 </div>
                 <div className="modalFeedback">
                     <p>Vous avez des suggestion pour améliorer CerberKey</p>
-                    <button type="button" className="feedbackButton" disabled>
+                    <button type="button" className="feedbackButton" onClick={onFeedback}>
                         Donnez mon avis
                     </button>
                 </div>

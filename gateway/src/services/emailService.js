@@ -146,3 +146,21 @@ export const sendDemoImages = async (email, securedImage, decoyImage) => {
 
     return data
 }
+
+export const sendFeedbackEmail = async (name, comment) => {
+    const { data, error } = await resend.emails.send({
+        from: 'CerberKey <onboarding@resend.dev>',
+        to: process.env.FEEDBACK_TO_EMAIL,
+        subject: 'CerberKey | Nouvel avis utilisateur',
+        text: ` Nouvel avis sur CerberKey
+                Prénom / pseudo : ${name}
+                Commentaire :
+                    ${comment}
+             `
+        .trim()   
+    })
+    if(error) {
+        throw new Error(error.message)
+    }
+    return data
+}

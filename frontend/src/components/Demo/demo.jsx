@@ -3,6 +3,7 @@ import { startDemo, verifyDemoImage } from '../../services/demoService.js'
 import { SendDemoEmail } from '../../services/emailService.js'
 import { downloadImages } from '../../utils/downloadImage.js'
 import VerifyModal from '../VerifyModal/verifyModal.jsx'
+import FeedbackModal from '../FeedbackModal/feedbackModal.jsx'
 import './demo.scss'
 
 function Demo() {
@@ -16,6 +17,7 @@ function Demo() {
     const [isVerifying, setIsVerifying] = useState(false)
     const [verificationResult, setVerificationResult] = useState(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [isFeedbackOpen, setIsFeedbackOpen] = useState(false)
     const fileInputRef = useRef(null)
     const handleDownload = async () => {
         setIsLoading(true)
@@ -87,6 +89,10 @@ function Demo() {
             fileInputRef.current.value = ''
         }
     }
+    const handleOpenFeedback = () => {
+        handleCloseModal()
+        setIsFeedbackOpen(true)
+    }
      return (
         <section className="demo" id="demo">
             <div className="demoHeader">
@@ -155,7 +161,10 @@ function Demo() {
                 </div>
             </div>
             {isModalOpen && (
-                <VerifyModal image={selectedImage} isVerifying={isVerifying} verificationResult={verificationResult} error={error} onClose={handleCloseModal}/>
+                <VerifyModal image={selectedImage} isVerifying={isVerifying} verificationResult={verificationResult} error={error} onClose={handleCloseModal} onFeedback={handleOpenFeedback}/>
+            )}
+            {isFeedbackOpen && (
+                <FeedbackModal onClose={() => setIsFeedbackOpen(false)}/>
             )}
         </section>
     )
