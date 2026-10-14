@@ -25,6 +25,7 @@ body {
     min-height: 100vh;
     color: #fff;
     font-family: "Orbitron", sans-serif;
+
 }
 
 button,
@@ -39,12 +40,27 @@ a {
 
 .heroBackground {
     min-height: 100vh;
-    background-image: url("./assets/images/background.webp");
+    position: relative;
+    overflow: hidden;
+
+    background-color: #000;
+
+    background-image:
+        linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0) 0%,
+            rgba(0, 0, 0, 0) 25%,
+            rgba(0, 0, 0, 0.15) 40%,
+            rgba(0, 0, 0, 0.45) 55%,
+            rgba(0, 0, 0, 0.8) 70%,
+            #000 85%,
+            #000 100%
+        ),
+        url("./assets/images/background.webp");
+
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
-    position: relative;
-    overflow: hidden;
 }
 // =============================
 // ESPACEMENT GLOBAL DES SECTIONS

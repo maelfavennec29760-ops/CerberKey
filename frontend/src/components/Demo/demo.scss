@@ -99,6 +99,17 @@
                 }
             }
         }
+            .successMessage,
+            .errorMessage {
+                text-align: center;
+                margin-top: 15px;
+            }
+            .successMessage {
+                color: #22c55e;
+            }
+            .errorMessage {
+                color: #ef4444;
+            }
         .separator {
             color: #888;
             font-size: 11px;
@@ -177,6 +188,50 @@
                 border-color 0.25s ease,
                 background 0.25s ease,
                 box-shadow 0.25s ease;
+            .uploadSuccess {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                    .successIcon {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        flex-shrink: 0;
+                        width: 42px;
+                        height: 42px;
+                        box-sizing: border-box;
+                        margin: 0;
+                        padding: 0;
+                        border: 2px solid #22c55e;
+                        border-radius: 50%;
+                        color: #22c55e;
+                        font-size: 24px;
+                        font-weight: bold;
+                        line-height: 1;
+                    }
+            p {
+                margin: 0;
+                padding: 0;
+                color: #22c55e;
+                font-size: 15px;
+                font-weight: 600;
+                line-height: 1.4;
+                text-align: center;
+                letter-spacing: 1px;
+            }
+            }
+            label {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                width: 100%;
+                min-height: 150px;
+                cursor: pointer;
+            }
             p {
                 margin: 0;
                 color: #ddd;
@@ -203,6 +258,23 @@
                 outline-offset: 4px;
             }
         }
+    }
+}
+.verifyButton {
+    display: block;
+    margin: 25px auto 0;
+    padding: 14px 32px;
+    background: #ff1738;
+    border: 1px solid #ff1738;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    &:hover {
+        background: #d9102e;
+        box-shadow: 0 0 20px rgba(255, 23, 56, 0.25);
     }
 }
 // =============================

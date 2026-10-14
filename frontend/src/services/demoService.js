@@ -1,19 +1,3 @@
-// const API_URL = import.meta.VITE_API_URL
-
-// //Demande vers le backend pour créer une session
-// export const startDemo = async () => {
-//     const response = await fetch(`${API_URL}/api/demo/start`, {
-//         method: 'POST'
-//     })
-//     console.log('Status:', response.status);
-//     console.log('URL:', response.url);
-//     if(!response) {
-//         throw new Error('Failed to start demo')
-//     }
-//     const text = response.text()
-//       console.log('Response length:', text.length);
-//     console.log('Response preview:', text.slice(0, 300));
-// }
 export const startDemo = async () => {
     const response = await fetch('http://localhost:3000/api/demo/start', {
         method: 'POST'
@@ -28,3 +12,32 @@ export const startDemo = async () => {
 
     return response.json();
 };
+
+export const verifyDemoImage = async (sessionId, file) => {
+    //Conversion de l'image en Base64
+    const image = await new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => {
+            const base64 = reader.result.split(',')[1]
+            resolve(base64)
+        }
+        reader.onerror = () => reject(reader.error)
+        reader.readAsDataURL(file)
+    })
+    //Envoie au backend
+    const response = await fetch('http://localhost:3000/api/demo/verify', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            sessionId,
+            image
+        })
+    })
+    if(!response.ok) {
+        throw new Error(`API error: ${response.status}`)
+    }
+    return response.json()
+}
+

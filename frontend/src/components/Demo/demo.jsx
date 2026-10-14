@@ -1,12 +1,22 @@
-import { useState } from 'react'
-import { startDemo } from '../../services/demoService.js'
+import { useRef, useState } from 'react'
+import { startDemo, verifyDemoImage } from '../../services/demoService.js'
+import { SendDemoEmail } from '../../services/emailService.js'
 import { downloadImages } from '../../utils/downloadImage.js'
+import VerifyModal from '../VerifyModal/verifyModal.jsx'
 import './demo.scss'
 
 function Demo() {
     const [isLoading, setIsLoading] = useState(false)
     const [sessionId, setSessionId] = useState(null)
     const [error, setError] = useState('')
+    const [email, setEmail] = useState('')
+    const [isSending, setIsSending] = useState(false)
+    const [emailSuccess, setEmailSuccess] = useState(false)
+    const [selectedImage, setSelectedImage] = useState(null)
+    const [isVerifying, setIsVerifying] = useState(false)
+    const [verificationResult, setVerificationResult] = useState(null)
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const fileInputRef = useRef(null)
     const handleDownload = async () => {
         setIsLoading(true)
         setError('')
@@ -21,7 +31,63 @@ function Demo() {
             setIsLoading(false)
         }
     }
-    return (
+    const handleSendEmail = async () => {
+        console.log('Bouton Recevoir déclenché')
+        setIsSending(true)
+        setError('')
+        setEmailSuccess(false)
+        try {
+            const data = await startDemo()
+            await SendDemoEmail(email, data.images)
+            setSessionId(data.sessionId)
+            setEmailSuccess(true)
+        } catch (error) {
+            console.error(error)
+            setError("Unable to send email. Please try again.")
+        } finally {
+            setIsSending(false)
+        }
+    }
+    const handleImageChange = (e) => {
+        const file = e.target.files[0]
+        if(!file) return
+        setSelectedImage(file)
+        setError('')
+        setVerificationResult(null)
+    }
+    const handleVerifyImage = async () => {
+        console.log('Selected image:', selectedImage)
+    console.log('Session ID:', sessionId)
+        if(isVerifying) return
+        if(!selectedImage || !sessionId) {
+            setError("Image or session missing")
+            return
+        }
+        setIsModalOpen(true)
+        setIsVerifying(true)
+        setError('')
+        setVerificationResult(null)
+        try {
+            const result = await verifyDemoImage(sessionId, selectedImage)
+            setVerificationResult(result)
+            console.log("Verification result:", result)
+        } catch (error) {
+            console.error(error)
+            setError("Error while verifying the image")
+        } finally {
+            setIsVerifying(false)
+        }
+    }
+    const handleCloseModal = () => {
+        setIsModalOpen(false)
+        setSelectedImage(null)
+        setVerificationResult(null)
+        setError('')
+        if(fileInputRef.current) {
+            fileInputRef.current.value = ''
+        }
+    }
+     return (
         <section className="demo" id="demo">
             <div className="demoHeader">
                 <p className="sectionLabel">DÉMONSTRATION</p>
@@ -33,17 +99,26 @@ function Demo() {
             </div>
             <div className="demoContent">
                 <div className="demoActions">
-                    <div className="emailForm">
-                        <input type="email" placeholder="votre@email.com"/>
-                        <button type="button">
-                            Recevoir
+                    <form className="emailForm" onSubmit={(e) => {
+                        e.preventDefault()
+                        handleSendEmail()
+                    }}>
+                        <input type="email" placeholder="votre@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required disabled={isSending}/>
+                        <button type="submit" disabled={isSending}>
+                            {isSending ? "Envoie..." : "Recevoir"}
                         </button>
-                    </div>
+                    </form>
                     <span className="sperator">OU</span>
                     <button className="downloadButton" type="button" onClick={handleDownload} disabled={isLoading}>
                         {isLoading ? 'Génération...' : 'Télécharger les images'}
                     </button>
                 </div>
+                {emailSuccess && (
+                    <p className="sucesssMessage"> Email envoyé ! Vérifiez votre boîte de réception.</p>
+                )}
+                {error && (
+                    <p className="errorMessage">{error}</p>
+                )}
                 <div className="demoTest">
                     <div className="demoTestHeader">
                         <span>ÉTAPE SUIVANTE</span>
@@ -53,11 +128,35 @@ function Demo() {
                         </p>
                     </div>
                     <div className="uploadZone">
-                        <p>DÉPOSEZ VOTRE IMAGE</p>
-                        <span>ou cliquez pour parcourir</span>
+                        <label>
+                            <input ref={fileInputRef} type="file" accept="image/png,image/jpeg,image/webp" onChange={handleImageChange} hidden/>
+                            {selectedImage ? (
+                                <>
+                                    <div className="uploadSuccess">
+                                        <span className="successIcon">✓</span>
+                                            <p>Image chargée</p>
+                                        
+                                    </div>
+                                    <span>Cliquer pour changer d'image</span>
+                                </>
+                            ) : (
+                                <>
+                                    <p>DÉPOSEZ VOTRE IMAGE</p>
+                                    <span>Cliquez pour parcourir</span>
+                                </>
+                            )}
+                        </label>
                     </div>
+                    {selectedImage && (
+                        <button type="button" className="verifyButton" onClick={handleVerifyImage} disabled={isVerifying}>
+                            {isVerifying ? "Vérification" : "Vérifier mon image"}
+                        </button>
+                    )}
                 </div>
             </div>
+            {isModalOpen && (
+                <VerifyModal image={selectedImage} isVerifying={isVerifying} verificationResult={verificationResult} error={error} onClose={handleCloseModal}/>
+            )}
         </section>
     )
 }
