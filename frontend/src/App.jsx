@@ -7,7 +7,7 @@ import Footer from './components/Footer/footer.jsx'
 
 function App() {
   return (
-    <>
+    <div className="appContainer">
       <div className="heroBackground">
         <Header/>
         <Hero/> 
@@ -16,7 +16,7 @@ function App() {
       <Demo/>
       <Stack/>
       <Footer/>
-    </>
+    </div>
   );
 }
 

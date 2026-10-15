@@ -19,13 +19,20 @@
 
 html {
     scroll-behavior: smooth;
+    background-color: #000;
 }
 
 body {
     min-height: 100vh;
-    color: #fff;
+    color: #000;
     font-family: "Orbitron", sans-serif;
 
+}
+.appContainer {
+    width: 100%;
+    min-height: 100vh;
+    width: 100%;
+    margin: auto;
 }
 
 button,
@@ -42,24 +49,35 @@ a {
     min-height: 100vh;
     position: relative;
     overflow: hidden;
-
+    width: 100%;
     background-color: #000;
 
     background-image:
-        linear-gradient(
-            to bottom,
-            rgba(0, 0, 0, 0) 0%,
-            rgba(0, 0, 0, 0) 25%,
-            rgba(0, 0, 0, 0.15) 40%,
-            rgba(0, 0, 0, 0.45) 55%,
-            rgba(0, 0, 0, 0.8) 70%,
-            #000 85%,
-            #000 100%
-        ),
-        url("./assets/images/background.webp");
+    // Fondu horizontal
+    linear-gradient(
+        to right,
+        #000 0%,
+        transparent 12%,
+        transparent 88%,
+        #000 100%
+    ),
+
+    // Ton fondu vertical actuel
+    linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 0, 0, 0) 25%,
+        rgba(0, 0, 0, 0.15) 40%,
+        rgba(0, 0, 0, 0.45) 55%,
+        rgba(0, 0, 0, 0.8) 70%,
+        #000 85%,
+        #000 100%
+    ),
+
+    url("./assets/images/background.webp");
 
     background-position: center;
-    background-size: cover;
+    background-size: 100% 100%, 100% 100%, cover;
     background-repeat: no-repeat;
 }
 // =============================
@@ -81,4 +99,28 @@ a {
 .demo,
 .techStack {
     border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+@media (min-width: 2200px) {
+    .heroBackground {
+        background-image:
+            linear-gradient(
+                to right,
+                #000 0%,
+                transparent 12%,
+                transparent 88%,
+                #000 100%
+            ),
+            linear-gradient(
+                to bottom,
+                transparent 0%,
+                transparent 25%,
+                rgba(0, 0, 0, 0.15) 40%,
+                rgba(0, 0, 0, 0.45) 55%,
+                rgba(0, 0, 0, 0.8) 70%,
+                #000 85%,
+                #000 100%
+            ),
+            url("./assets/images/background.webp");
+    }
 }

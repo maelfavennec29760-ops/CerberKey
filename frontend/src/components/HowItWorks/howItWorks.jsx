@@ -24,7 +24,7 @@ function HowItWorks() {
                 <div className="step">
                     <span className="stepNumber">03</span>
                     <h3>DÉCHIFFREMENT</h3>
-                    <p>Le token traverse les trois couches de déchiffrement.</p>
+                    <p>Le token est déchiffré.</p>
                 </div>
                 <div className="step">
                     <span className="stepNumber">04</span>
