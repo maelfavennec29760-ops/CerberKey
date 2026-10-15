@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 3000
 app.use(helmet())
 console.log('Allowed frontend:', process.env.FRONTEND_URL);
 app.use(cors({ origin: process.env.FRONTEND_URL }))
-app.use(express.json({ limit: '5mb' }))
+app.use(express.json({ limit: '8mb' }))
 
 app.use('/api', healthRoutes)
 app.use('/api/demo', DemoRoutes)

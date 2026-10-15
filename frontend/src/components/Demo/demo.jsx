@@ -8,7 +8,6 @@ import './demo.scss'
 
 function Demo() {
     const [isLoading, setIsLoading] = useState(false)
-    const [sessionId, setSessionId] = useState(null)
     const [error, setError] = useState('')
     const [email, setEmail] = useState('')
     const [isSending, setIsSending] = useState(false)
@@ -25,7 +24,6 @@ function Demo() {
         try {
             const data = await startDemo()
             await downloadImages(data.images)
-            setSessionId(data.sessionId)
         } catch (error) {
             console.error(error);
             setError("Unable to generate images. Please try again.");
@@ -41,7 +39,6 @@ function Demo() {
         try {
             const data = await startDemo()
             await SendDemoEmail(email, data.images)
-            setSessionId(data.sessionId)
             setEmailSuccess(true)
         } catch (error) {
             console.error(error)
@@ -53,16 +50,19 @@ function Demo() {
     const handleImageChange = (e) => {
         const file = e.target.files[0]
         if(!file) return
+        if(file.type !== 'image/png') {
+            setError("Only PNG images are supported")
+            e.target.value = ''
+            return
+        }
         setSelectedImage(file)
         setError('')
         setVerificationResult(null)
     }
     const handleVerifyImage = async () => {
-        console.log('Selected image:', selectedImage)
-    console.log('Session ID:', sessionId)
         if(isVerifying) return
-        if(!selectedImage || !sessionId) {
-            setError("Image or session missing")
+        if(!selectedImage) {
+            setError("Please select an image")
             return
         }
         setIsModalOpen(true)
@@ -70,7 +70,7 @@ function Demo() {
         setError('')
         setVerificationResult(null)
         try {
-            const result = await verifyDemoImage(sessionId, selectedImage)
+            const result = await verifyDemoImage(selectedImage)
             setVerificationResult(result)
             console.log("Verification result:", result)
         } catch (error) {
@@ -135,7 +135,7 @@ function Demo() {
                     </div>
                     <div className="uploadZone">
                         <label>
-                            <input ref={fileInputRef} type="file" accept="image/png,image/jpeg,image/webp" onChange={handleImageChange} hidden/>
+                            <input ref={fileInputRef} type="file" accept="image/png" onChange={handleImageChange} hidden/>
                             {selectedImage ? (
                                 <>
                                     <div className="uploadSuccess">

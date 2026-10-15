@@ -2,10 +2,82 @@ import sharp from 'sharp'
 import { readdir } from 'node:fs/promises'
 import { randomInt, createHmac, randomBytes } from 'node:crypto'
 import { encryptToken, decryptToken } from "./cryptoService.js";
+import { encryptionKey, positionKey } from '../config/cryptoKeys.js';
 import path from 'node:path'
 
 const IMAGES_DIR = path.resolve('assets/images')
+const HEADER_MAGIC = Buffer.from('CBK2')
+const HEADER_SIZE = 36
+const HEADER_BITS = HEADER_SIZE * 8
 
+//Convertit un UUID en Buffer de 16 octets
+const uuidToBuffer = (uuid) => {
+    const hex = uuid.replace(/-/g, '')
+    if(!/^[0-9a-fA-F]{32}$/.test(hex)) {
+        throw new Error("Invalid session UUID")
+    }
+    return Buffer.from(hex, 'hex')
+}
+//Convertit un Buffer de 16 octets en UUID
+const bufferToUuid = (buffer) => {
+    if(buffer.length !== 16) {
+        throw new Error("Invalid UUID buffer")
+    }
+    const hex = buffer.toString('hex')
+    return [
+        hex.slice(0, 8),
+        hex.slice(8, 12),
+        hex.slice(12, 16),
+        hex.slice(16, 20),
+        hex.slice(20, 32)
+    ].join('-')
+}
+//Inscription des informations dans les bits de poids faible des premiers canux RGB
+const writeHeader = (data, sessionId, nonce) => {
+    if(data.length < Math.ceil(HEADER_BITS / 3) * 4) {
+        throw new Error("Image too small for CerberKey header")
+    }
+    const header = Buffer.concat([
+        HEADER_MAGIC,
+        uuidToBuffer(sessionId),
+        nonce
+    ])
+    if(header.length !== HEADER_SIZE) {
+        throw new Error("Invalid CerberKey header size")
+    }
+    //Chaque octets est réparti sur 8 canaux RGB
+    for(let bitIndex = 0; bitIndex < header.length * 8; bitIndex++) {
+        const byteIndex = Math.floor(bitIndex / 8)
+        const bitOffset = 7 - (bitIndex % 8)
+        const bit = (header[byteIndex] >> bitOffset) & 1
+        const pixelIndex = Math.floor(bitIndex / 3)
+        const channel = bitIndex % 3
+        const dataIndex = pixelIndex * 4 + channel
+        data[dataIndex] = (data[dataIndex] & 0xFE) | bit
+    }
+}
+//Lecture de l'en-tête
+const readHeader = (data) => {
+    if(data.length < Math.ceil(HEADER_BITS / 3) * 4) {
+        throw new Error("Image too small for CerberKey header")
+    }
+    const header = Buffer.alloc(HEADER_SIZE)
+    for(let bitIndex = 0; bitIndex < HEADER_SIZE * 8; bitIndex++) {
+        const pixelIndex = Math.floor(bitIndex / 3)
+        const channel = bitIndex % 3
+        const dataIndex = pixelIndex * 4 + channel
+        const bit = data[dataIndex] & 1
+        const byteIndex = Math.floor(bitIndex / 8)
+        header[byteIndex] = (header[byteIndex] << 1) | bit
+    }
+    if(!header.subarray(0, 4).equals(HEADER_MAGIC)) {
+        throw new Error("No CerberKey V2 header found")
+    }
+    return {
+        sessionId: bufferToUuid(header.subarray(4, 20)),
+        nonce: header.subarray(20, 36)
+    }
+}
 export const generateImage = async () => {
     //Récupère les images JPG 
     const files = await readdir(IMAGES_DIR)
@@ -39,91 +111,68 @@ export const generateImage = async () => {
         .toBuffer()
     return imageBuffer
 }
-
-// Génère une position pseudo-aléatoire reproductible à partir
-// d'une clé secrète, d'un nonce et d'un compteur.
 const getPosition = (key, nonce, counter, capacity) => {
-    // HMAC-SHA256 génère une empreinte à partir de la clé secrète.
-    // Pour les mêmes paramètres, le résultat sera toujours identique.
     const hash = createHmac("sha256", key)
         .update(nonce)
         .update(String(counter))
         .digest();
-    // Convertit les 4 premiers octets du hash en entier.
-    // Le modulo limite la position au nombre de canaux RGB disponibles.
     return hash.readUInt32BE(0) % capacity;
 };
 
-export const embedToken = async (imageBuffer, token, secretKey) => {
-    // Décode l'image en données brutes RGBA.
-    // Chaque pixel possède 4 canaux : rouge, vert, bleu et alpha.
+export const embedToken = async (imageBuffer, token, sessionId) => {
+    //Décode l'image en données brutes RGBA
     const { data, info } = await sharp(imageBuffer)
         .ensureAlpha()
         .raw()
         .toBuffer({ resolveWithObject: true });
-    // Convertit le token en octets pour pouvoir manipuler ses bits.
-    const tokenBuffer = encryptToken(token, secretKey);
-    // Génère un nonce aléatoire de 16 octets.
-    // Il permet de produire des positions différentes à chaque insertion,
-    // même si la clé secrète reste identique.
+    //Chiffre le token avec la clé AES
+    const tokenBuffer = encryptToken(token, encryptionKey);
+    //Génère un nonce aléatoire de 16 octets
     const nonce = randomBytes(16);
-    // Prépare les données à cacher :
-    // 4 octets pour la longueur du token, suivis du token lui-même.
-    const payload = Buffer.alloc(4 + tokenBuffer.length);
-    // Écrit la longueur du token dans les 4 premiers octets.
-    payload.writeUInt32BE(tokenBuffer.length, 0);
-    // Copie les octets du token après sa longueur.
-    tokenBuffer.copy(payload, 4);
-    // Chaque pixel peut stocker 3 bits :
-    // un dans le canal rouge, un dans le vert et un dans le bleu.
+    //Calcule le cnombre de canaux RGB disponibles
     const capacity = info.width * info.height * 3;
-    // Calcule le nombre total de bits à cacher.
+    //Réserve les premiers canaux pour l'en-tête V2
+    const availableCapacity = capacity - HEADER_BITS
+    //Prépare les données à dissimuler
+    const payload = Buffer.alloc(4 + tokenBuffer.length);
+    payload.writeUInt32BE(tokenBuffer.length, 0);
+    tokenBuffer.copy(payload, 4);
     const requiredBits = payload.length * 8;
-    // Vérifie que l'image possède suffisamment de canaux disponibles.
-    if (requiredBits > capacity) {
+    //Vérifie si l'image possède suffisamment de place
+    if (availableCapacity <= 0 || requiredBits > availableCapacity) {
         throw new Error("Token too large for image");
     }
-    // Mémorise les positions déjà utilisées pour éviter
-    // d'écraser un bit précédemment inséré.
+    //Inscrit l'identifiant de session et le nonce dans l'image
+    writeHeader(data, sessionId, nonce)
+    //Empêche l'utilisation plusieurs fois d'une même image
     const usedPositions = new Set();
     let counter = 0
-    // Parcourt tous les bits des données à cacher.
+    // Parcourt chaque bit du payload
     for (let bitIndex = 0; bitIndex < requiredBits; bitIndex++) {
         let position;
-        // Recherche une position pseudo-aléatoire non encore utilisée.
+        // Recherche une position pseudo-aléatoire libre
         do {
             position = getPosition(
-                secretKey,
+                positionKey,
                 nonce,
                 counter,
-                capacity
-            );
+                availableCapacity
+            ) + HEADER_BITS
             counter++;
         } while (usedPositions.has(position));
-        // Enregistre la position pour empêcher sa réutilisation.
         usedPositions.add(position);
-        // Détermine le pixel et le canal RGB correspondant à la position.
+        // Détermine le pixel et le canal RGB
         const pixelIndex = Math.floor(position / 3);
         const channel = position % 3;
-        // Chaque pixel contient 4 octets RGBA.
-        // On ignore le canal alpha pour préserver la transparence.
         const dataIndex = pixelIndex * 4 + channel;
-        // Identifie l'octet contenant le bit à insérer.
+        //Extrait le bits à cacher
         const byteIndex = Math.floor(bitIndex / 8);
-        // Détermine la position du bit dans cet octet,
-        // en commençant par le bit de poids fort.
         const bitOffset = 7 - (bitIndex % 8);
-        // Extrait le bit (0 ou 1) des données.
         const bit = (payload[byteIndex] >> bitOffset) & 1;
-        // Stéganographie LSB :
-        // 0xFE efface le dernier bit du canal de couleur.
-        // L'opérateur | remplace ce bit par celui du token.
-        // La couleur varie au maximum de 1 sur 255.
+        //Modifie uniquement le bit de poids faible
         data[dataIndex] = (data[dataIndex] & 0xFE) | bit;
     }
-    // Reconstruit une image PNG à partir des pixels modifiés.
-    // Le PNG est sans perte, contrairement au JPEG qui pourrait
-    // détruire les bits contenant les données cachées.
+    //Reconstruit l'image PNG sans perte
     const securedImage = await sharp(data, {
         raw: {
             width: info.width,
@@ -133,9 +182,6 @@ export const embedToken = async (imageBuffer, token, secretKey) => {
     })
         .png()
         .toBuffer();
-    // Retourne l'image sécurisée et le nonce.
-    // Le nonce devra être conservé pour retrouver les mêmes positions
-    // lors de l'extraction du token.
     return {
         image: securedImage,
         nonce: nonce.toString("hex")
@@ -143,16 +189,21 @@ export const embedToken = async (imageBuffer, token, secretKey) => {
 };
 
 
-export const extractToken = async (imageBuffer, secretKey, nonceHex) => {
+export const extractToken = async (imageBuffer) => {
     // Récupère les pixels RGBA de l'image
     const { data, info } = await sharp(imageBuffer)
         .ensureAlpha()
         .raw()
         .toBuffer({ resolveWithObject: true });
-    // Convertit le nonce en octets
-    const nonce = Buffer.from(nonceHex, "hex");
+    //Lit l'en-tête CerberKeyV2
+    const { sessionId, nonce } = readHeader(data)
     // Nombre de canaux RGB disponibles
     const capacity = info.width * info.height * 3;
+    //Exclut les 288 premiers canaux réservés à l'en-tête
+    const availableCapacity = capacity - HEADER_BITS
+    if(availableCapacity <= 0) {
+        throw new Error("Image too small for CerberKey token")
+    } 
     // Mémorise les positions déjà lues
     const usedPositions = new Set();
     let counter = 0;
@@ -161,11 +212,11 @@ export const extractToken = async (imageBuffer, secretKey, nonceHex) => {
         let position;
         do {
             position = getPosition(
-                secretKey,
+                positionKey,
                 nonce,
                 counter,
-                capacity
-            );
+                availableCapacity
+            ) + HEADER_BITS
             counter++;
         } while (usedPositions.has(position));
         usedPositions.add(position);
@@ -191,7 +242,7 @@ export const extractToken = async (imageBuffer, secretKey, nonceHex) => {
     }
     const tokenLength = lengthBuffer.readUInt32BE(0);
     // Vérifie que la longueur est cohérente
-    if (tokenLength === 0 || (4 + tokenLength) * 8 > capacity) {
+    if (tokenLength === 0 || (4 + tokenLength) * 8 > availableCapacity || tokenLength > 4096) {
         throw new Error("Invalid embedded token length");
     }
     // Reconstruit le token
@@ -199,5 +250,9 @@ export const extractToken = async (imageBuffer, secretKey, nonceHex) => {
     for (let i = 0; i < tokenLength; i++) {
         tokenBuffer[i] = readByte();
     }
-    return decryptToken(tokenBuffer, secretKey);
+    const token = decryptToken(tokenBuffer, encryptionKey)
+    return {
+        token,
+        sessionId
+    }
 };
