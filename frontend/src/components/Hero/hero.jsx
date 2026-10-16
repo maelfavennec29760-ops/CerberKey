@@ -20,7 +20,7 @@ function Hero() {
                         behavior: "smooth"
                     })
                 }>Tester CerberKey</button>
-                <a href="/documentation" className="heroDocumentation">
+                <a href="https://github.com/maelfavennec29760-ops/CerberKey.git" className="heroDocumentation">
                     Documentation
                     <span aria-hidden="true">→</span>
                 </a>
